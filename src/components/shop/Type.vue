@@ -7,6 +7,8 @@
           ref="tree"
           show-checkbox
           accordion
+          check-strictly="true"
+          expand-on-click-node="false"
         >
 
         </el-tree>
@@ -106,7 +108,7 @@
       },
       methods: {
         updateType:function(){
-
+          //获取选中节点的数组
           var  checked =  this.$refs.tree.getCheckedNodes();
 
 
@@ -137,12 +139,13 @@
             });
 
         },
-
+        //新增弹框
         nodeCheckbox:function(){
+          debugger;
 
             var  checked =  this.$refs.tree.getCheckedNodes();
 
-            alert(this.$refs.tree.getCheckedNodes());
+            //alert(this.$refs.tree.getCheckedNodes());
 
           if(checked.length>1){
             alert("节点选择过多");

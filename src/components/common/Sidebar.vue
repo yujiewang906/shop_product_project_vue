@@ -69,7 +69,14 @@ export default {
                   {
                     index: 'Type',
                     title: '分类管理'
-                  }]
+                  },{
+                    index: 'Brand',
+                    title: '品牌管理'
+                  },{
+                    index: 'Attribute',
+                    title: '属性管理'
+                  }
+                  ]
               },
                 {
                     icon: 'el-icon-lx-calendar',

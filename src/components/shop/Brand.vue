@@ -1,9 +1,21 @@
 <template>
     <div>
+
+      <el-form :inline="true"  v-model="searchForm" class="demo-form-inline">
+        <el-form-item label="名称">
+          <el-input  placeholder="名称" v-model="searchForm.name"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="queryBrandData(1)">查询</el-button>
+          <el-button  type="success"   @click="addBrand">新增</el-button>
+        </el-form-item>
+      </el-form>
+
+
+
       <div id="brandTable">
 
 
-        <el-button  type="success"   @click="addFormFlag=true">新增</el-button>
 
           <el-table
             :data="brandData"
@@ -28,11 +40,6 @@
             </el-table-column>
 
             <el-table-column
-              prop="imgpath"
-              label="图片">
-            </el-table-column>
-
-            <el-table-column
               prop="bandDesc"
               label="品牌介绍">
             </el-table-column>
@@ -51,7 +58,9 @@
 
             <el-table-column
               prop="isDel"
-              label="是否展示">
+              label="是否展示"
+              :formatter="fmtDel"
+            >
             </el-table-column>
 
             <el-table-column
@@ -77,6 +86,7 @@
                   size="mini"
                   type="danger"
                   @click="deleteBrand(scope.row)">删除</el-button>
+
               </template>
 
 
@@ -143,8 +153,8 @@
 
           <el-form-item label="是否展示" prop="isDel">
             <el-radio-group v-model="addBrandForm.isDel">
-              <el-radio label="0">是</el-radio>
-              <el-radio label="1">否</el-radio>
+              <el-radio :label="0">是</el-radio>
+              <el-radio :label="1">否</el-radio>
             </el-radio-group>
           </el-form-item>
 
@@ -189,17 +199,24 @@
           },
 
           imageUrl:"",
-
+          /*新增品牌弹框*/
           addFormFlag:false,
+
           rule:{ //验证规则
             name:[
               { required: true, message: '请输入名称', trigger: 'blur' },
               { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
             ]
+          },
+          /*条件查询
+          * */
+          searchForm:{
+            name:""
           }
         }
     },
     methods:{
+
           handleAvatarSuccess(res, file) {
             //打断点 看怎么取返回值
             this.addBrandForm.imgpath=res.data;
@@ -220,18 +237,44 @@
             return isJPG && isLt2M;
           },
           deleteBrand:function(row){
+
               this.$ajax.delete("http://localhost:8080/api/brand/deleteBrand?id="+row.id).then(res=>{
                 this.queryBrandData(1);
               })
           },
           updateBrand:function(row){
-              console.log(row);
+            this.addBrandForm={
+              id:"",
+              name:"",
+              bandE:"",
+              bandDesc:"",
+              imgpath:"",
+              ord:"",
+              isDel:"",
+              author:""
+            }
+            this.imageUrl=row.imgpath;
+            this.addFormFlag = true;
               this.addBrandForm = row;
-              this.addFormFlag = true;
           },
-
+          /*新增清空*/
+          addBrand:function(){
+            this.addBrandForm={
+              id:"",
+                name:"",
+                bandE:"",
+                bandDesc:"",
+                imgpath:"",
+                ord:"",
+                isDel:"",
+                author:""
+            }
+            this.imageUrl="";
+            this.addFormFlag = true;
+          },
           queryBrandData:function(page){
-              this.$ajax.get("http://localhost:8080/api/brand/queryData?currPage="+this.size+"&page="+page).then(res=> {
+              var name = this.$qs.stringify(this.searchForm);
+              this.$ajax.get("http://localhost:8080/api/brand/queryData?currPage="+this.size+"&page="+page+"&"+name).then(res=> {
                   this.brandData = res.data.data.data;
                   this.count = res.data.data.count;
                 }
@@ -257,7 +300,7 @@
               this.$refs['addBrandForm'].validate(res => {
                 if (res == true) {
                   this.$ajax.post("http://localhost:8080/api/brand/updateBrand", this.$qs.stringify(this.addBrandForm)).then(res => {
-                    this.addFormFlag = false;
+                      this.addFormFlag = false;
                     this.queryBrandData(1);
                   }).catch(err => console.log(err));
                 }
@@ -276,6 +319,13 @@
                 });
             }
           },
+          fmtDel:function (a,b,c,d) {
+              if (c==0){
+                return "是";
+              } else {
+                return "否";
+              }
+          }
 
     },
     created:function () {
@@ -287,5 +337,29 @@
 </script>
 
 <style scoped>
+
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 
 </style>

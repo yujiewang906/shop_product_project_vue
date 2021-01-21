@@ -280,8 +280,7 @@
                 }
               ).catch(function (err) {
                   console.log(err);
-                }
-              )
+                } )
 
           },
           handleCurrentChange:function(page){ //跳转页面

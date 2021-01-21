@@ -75,6 +75,12 @@ export default {
                   },{
                     index: 'Attribute',
                     title: '属性管理'
+                  },{
+                    index: 'Shop',
+                    title: '商品管理'
+                  },{
+                    index: 'ShowShop',
+                    title: '商品展示'
                   }
                   ]
               },

@@ -21,12 +21,12 @@
             >
           </el-table-column>
 
-          <el-table-column
+          <!--<el-table-column
             prop="color"
             label="颜色"
             :formatter="fmtColor"
             >
-          </el-table-column>
+          </el-table-column>-->
 
           <el-table-column
             prop="nameCH"
@@ -37,13 +37,14 @@
           <el-table-column
             prop="typeId"
             label="商品类型"
+            :formatter="fmtProductType"
             >
           </el-table-column>
 
           <el-table-column
             prop="type"
             label="属性类型"
-            :formatter="fmtType"
+            :formatter = "fmtType"
             >
           </el-table-column>
 
@@ -106,13 +107,13 @@
             <el-input v-model="addAttributeForm.name" autocomplete="off" ></el-input>
           </el-form-item>
 
-          <el-form-item label="颜色" prop="color">
+          <!--<el-form-item label="颜色" prop="color">
             <el-radio-group v-model="addAttributeForm.color">
               <el-radio :label="0">红</el-radio>
               <el-radio :label="1">白</el-radio>
               <el-radio :label="2">蓝</el-radio>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item>-->
 
           <el-form-item label="属性中文名" prop="nameCH">
             <el-input  v-model="addAttributeForm.nameCH"></el-input>
@@ -242,11 +243,11 @@
             if (!value) {
               return callback(new Error('属性名不能为空'));
             }
-            if(/^[\u4e00-\u9fa5]+$/i.test(value)){
+            /*if(/^[\u4e00-\u9fa5]+$/i.test(value)){
               callback();
             }else{
               callback(new Error('只能输入中文'));
-            }
+            }*/
           };
 
           return {
@@ -260,7 +261,7 @@
             addAttributeForm: {
               id:"",
               name: "",
-              color: "",
+             /* color: "",*/
               nameCH:"",
               typeId:"",
               type:"",
@@ -302,7 +303,7 @@
               nameCH: [
                 { required: true, message: '请输入属性值的名称', trigger: 'blur' },
                 { max: 10, message: '长度不能超过 10 个字符', trigger: 'blur' },
-                { validator:checkname,trigger: 'blur' }
+               /* { validator:checkname,trigger: 'blur' }*/
               ],
               name: [
                 { required: true, message: '请输入属性值', trigger: 'change' }
@@ -418,7 +419,7 @@
               this.addAttributeForm={
                   id:"",
                   name: "",
-                  color: "",
+                 /* color: "",*/
                   nameCH:"",
                   typeId:"",
                   type:"",
@@ -430,9 +431,9 @@
           },
           /*属性修改的回显*/
           updateAttribute:function(row){
-           console.log(row.color);
+
             this.addAttributeForm = row;
-            this.addAttributeForm.color = row.color;
+            /*this.addAttributeForm.color = row.color;*/
             this.addFormFlag = true;
           },
 
@@ -458,13 +459,13 @@
         /*判断是修改还是新增修改*/
             addForm:function () {
               /*id不为空则为修改*/
-              if (this.addAttributeForm.id != null && this.addAttributeForm != ""){
+              if (this.addAttributeForm.id != null && this.addAttributeForm.id != ""){
                 this.$ajax.post("http://localhost:8080/api/attribute/updateAttribute",this.$qs.stringify(this.addAttributeForm)).then(res=>{
                     this.addFormFlag=false;
                     this.queryAttributeData(1);
                 }).catch(err=>console.log(err));
               }else {
-                /*否则就是删除*/
+                /*否则就是新增*/
                 //取得验证结果
                 this.$refs['addAttributeForm'].validate(res => {
                   if (res == true) {
@@ -476,7 +477,7 @@
                 });
               }
             },
-        /*转换属性颜色*/
+        /*/!*转换属性颜色*!/
         fmtColor:function (a,b,c,d) {
             if (c==0){
               return  "红色"
@@ -485,7 +486,7 @@
             }if (c==2){
               return  "蓝色"
             }
-        },
+        },*/
         /*转换属性值类型*/
         fmtType:function (a,b,c,d) {
             if (c==0){
@@ -510,6 +511,14 @@
             return  "是";
           } else {
             return "否";
+          }
+        },
+        /*转换属性的商品类型*/
+        fmtProductType:function(row){
+          for (let i = 0; i <this.ajaxTypeData.length; i++) {
+              if (row.typeId==this.ajaxTypeData[i].id){
+                return this.ajaxTypeData[i].name;
+              }
           }
         },
         //处理商品分类下拉框
@@ -542,7 +551,7 @@
                     }
                 }
               }else{
-                this.typeName +="/"+node.name;
+                this.typeName+="/"+node.name;
               }
         },
         //获取子节点的数据
@@ -561,14 +570,10 @@
                  break;
                }
           }
-
           if (rs==true){
             this.types.push(node);
           }
-
         }
-
-
 
 
       },

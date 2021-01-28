@@ -132,15 +132,15 @@
 
             <!--  0 下拉框     1 单选框      2  复选框   3  输入框  -->
             <!--输入框-->
-            <el-input v-if="a.type==3"></el-input>
+            <el-input v-if="a.type==3"  v-model="a.ckValues"></el-input>
 
             <!--下拉框-->
-            <el-select v-if="a.type==0"  placeholder="请选择">
+            <el-select v-if="a.type==0"  placeholder="请选择"  v-model="a.ckValues">
               <el-option v-for="b in a.values" :key="b.id"  :label="b.nameCH" value="b.id"></el-option>
             </el-select>
 
             <!--单选框-->
-            <el-radio-group  v-if="a.type==1"  >
+            <el-radio-group  v-if="a.type==1"  v-model="a.ckValues" >
               <el-radio v-for="b in a.values" :key="b.id" :label="b.nameCH"></el-radio>
             </el-radio-group>
 
@@ -218,7 +218,7 @@
       methods:{
         addProduct:function(){
 
-            debugger;
+            //debugger;
             this.productForm.typeId=this.productForm2.typeId;
 
             let atrrs  = [];
